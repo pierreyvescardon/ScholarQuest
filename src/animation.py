@@ -5,7 +5,7 @@ class AnimateSprite(pygame.sprite.Sprite):
 
     def __init__(self, name):
         super().__init__() #si on appele pas cette super classe, l'heritage ne fonctionne pas
-        self.sprite_sheet = pygame.image.load(f"C:/Users/Proprio/Desktop/Zombie/sprite/{name}.png")
+        self.sprite_sheet = pygame.image.load(f"C:/Users/Proprio/Desktop/ScholarQuest/sprite/{name}.png")
         self.animation_index = 0 # par default on veut afficher la premiere image de notre liste d'image
         self.clock = 0
         self.images = {

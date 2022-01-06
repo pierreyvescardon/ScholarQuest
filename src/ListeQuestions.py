@@ -7,7 +7,7 @@ import random
 class questionnaire:
 
     def __init__(self,name):
-        tableauCSV = csv.DictReader(open(f"C:/Users/Proprio/Desktop/Zombie/{name}.csv", 'r', encoding='utf-8-sig'))
+        tableauCSV = csv.DictReader(open(f"C:/Users/Proprio/Desktop/ScholarQuest/{name}.csv", 'r', encoding='utf-8-sig'))
         Dictionnaire = [dict(row) for row in tableauCSV]
         self.questions = []
         self.reponse = []

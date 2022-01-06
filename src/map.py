@@ -91,7 +91,7 @@ class MapManager:
 
     def registerMap(self, name, portals=[], npcs=[]):  # nom de la carte qui va etre chargee
         # charger la carte (tmx)
-        tmx_data = pytmx.util_pygame.load_pygame(f"C:/Users/Proprio/Desktop/Zombie/map/{name}.tmx")
+        tmx_data = pytmx.util_pygame.load_pygame(f"C:/Users/Proprio/Desktop/ScholarQuest/map/{name}.tmx")
         map_data = pyscroll.TiledMapData(tmx_data)
         map_layer = pyscroll.orthographic.BufferedRenderer(map_data,
                                                            self.screen.get_size())  # permet de charger les differents calques de notre fichier tmx. self.screen.get_size() indique la surface sur laquelle on veut afficher nos layer pour le coup map_data
