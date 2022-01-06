@@ -1,0 +1,17 @@
+#ceci est un test pour apprendre les commandes de bases sur linux 
+
+Vies=3
+
+# 1 = "Comment conaître les FS présent sur le serveur ? "
+ReponseAttendue = "df -h"
+# 2 = "Comment connaître le nom de son serveur ?"
+ReponseAttendue = "hostname -f"
+# 3 = "Dossier courant"
+ReponseAttendue = "pwd"
+# 4 = "creer une arborescence de 3 dossiers dossier1/dossier2/dossier3"
+ReponseAttendue = "mkdir -p dossier1/dossier2/dossier3"
+# 5 = "compter le nombre de ligne"
+ReponseAttendue = "wc -l"
+# 6 = "Suivre en temps réel les ajout dans un fichier.log"
+ReponseAttendue = "tail -f fichier.log"
+

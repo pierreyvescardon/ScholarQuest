@@ -1,0 +1,20 @@
+﻿Question;Reponse
+Connaitre les FS installees;df -h
+Créer une arborescence de dossier dossier1/dossier2/dossier3;mkdir -p dossier1/dossier2/dossier3
+Suivre en temps reel les ajout dans un fichier fichier.log;tail -f fichier.log
+changer le proprietaire et le groupe propietaire du fichier texte.txt pour patrick et groupe amis;chown patrick:amis texte.txt
+Changer les droit du fichier texte.txt situe a dans les dossier /home pour que le propriétaire ait tous les droits le groupe et les autres le droit de lecture et d'execution;chmod 755 /home/texte.txt
+rechercher dans le dossier etc tous les fichiers dont le nom finit par .jpg;"find /etc -name ""*.jpg"""
+Rechercher tous les fichiers d'une taille superieure a 10 Mo sur le serveur et leur interdire leur ecriture et execution a l'ensemble des utilisateursfind / -size +10M -exec chmod 444;find / -size +10M -exec chmod 444
+Changer le mot de passe de l'utilisatrice Jeanne;passwd Jeanne
+Copier le dossier argent et tous les fichiers qu'il contient dans le dossier banque en modifiant son nom pour monnaie;cp -R argent banque/monnaie 
+Changer le groupe propiétaire du fichier rapport.txt pour le groupe PRO;chgrp PRO rapport.txt
+Rechercher une commande qui inclus le mot sound ;apropos sound
+Retrouver l'historique des commandes passées ;history 
+Rechercher dans le fichier poule.txt toutes les lignes contenant le mot poussin sans tenir compte de la casse ;grep -i poussin poule.txt
+Afficher les fichiers du dossiers courant en fonction de leur taille sur le disque et du plus grand au plus petit et en affichant que les premieres lignes ;du | sort -nr | head
+Afficher l'ensemble des processus en cours pour tous les utilisateurs ;ps -ef
+Connaitre de manière exhaustive la liste des utilisateurs utilisant le serveur actuellement ;w
+Dossier courant;pwd
+Lancer en arriere plan une copie du fichier video.avi nommée copie_video.avi;cp video.avi copie_video.avi &
+Dans le fichier note.csv separer les donnes en colonne grace aux : et recuperer les colonnes 1 a 3;cut -d : -f 1-3 note.txt
