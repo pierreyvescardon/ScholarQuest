@@ -6,12 +6,12 @@ class DialogBox:
     Y_POSITION = 470
 
     def __init__(self):
-        self.box = pygame.image.load(("C:/Users/Proprio/Desktop/Zombie/dialogs/dialog_box.png"))
+        self.box = pygame.image.load(("C:/Users/Proprio/Desktop/ScholarQuest/dialogs/dialog_box.png"))
         self.box = pygame.transform.scale(self.box, (700,100))
         self.texts = []
         self.text_index = 0
         self.letter_index = 0# pour afficher les lettres 1 par 1
-        self.font = pygame.font.Font("C:/Users/Proprio/Desktop/Zombie/dialogs/dialog_font.ttf", 18)#18 correspond q lq tqille de la police
+        self.font = pygame.font.Font("C:/Users/Proprio/Desktop/ScholarQuest/dialogs/dialog_font.ttf", 18)#18 correspond q lq tqille de la police
         self.reading = False
 
     def execute(self, dialog=[]):
