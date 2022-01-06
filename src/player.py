@@ -56,10 +56,11 @@ class Player(Entity):
 
 class NPC(Entity):
 
-    def __init__(self, name, nb_points, dialog):
+    def __init__(self, name, nb_points, dialog, reponse):
         super().__init__(name,0,0)
         self.nb_points = nb_points
         self.dialog = dialog
+        self.reponse = reponse
         self.points=[]
         self.name = name
         self.speed = 1

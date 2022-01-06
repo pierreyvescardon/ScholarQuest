@@ -1,9 +1,9 @@
 import pygame
 
-class DialogBox:
+class Reponse_DialogBox:
 
     X_POSITION = 60
-    Y_POSITION = 470
+    Y_POSITION = 120
 
     def __init__(self):
 
