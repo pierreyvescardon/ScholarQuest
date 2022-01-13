@@ -4,7 +4,10 @@ import pygame, pytmx, pyscroll
 
 
 from src import ListeQuestions
+from src.CheckAnswer import Check_Answer
+from src.ListeQuestions import questionnaire
 from src.player import NPC
+from src.reponse_dialog import Reponse_DialogBox
 
 
 @dataclass
@@ -37,7 +40,7 @@ class MapManager:
             Portal(from_world="world", origin_point="enter_house", target_world="house", teleport_point="spawn_enter_house"),
             Portal(from_world="world", origin_point="enter_house2", target_world="house2", teleport_point="spawn_house"),
             Portal(from_world="world", origin_point="enter_dungeon", target_world="dungeon", teleport_point="spawn_dungeon")
-        ], npcs=[NPC("paul", nb_points=7, dialog=ListeQuestions.questionnaire("Questions").questions, reponse=ListeQuestions.questionnaire("Questions").reponse)])
+        ], npcs=[NPC("paul", nb_points=7, dialog=ListeQuestions.questionnaire("Questions").questions, reponse=ListeQuestions.questionnaire("Questions").reponse,type="prof")])
         self.registerMap("house", portals=[
             Portal(from_world="house", origin_point="exit_house", target_world="world", teleport_point="spawn_exit_house")
         ])
@@ -56,9 +59,23 @@ class MapManager:
     def check_npc_collision(self, dialog_box, reponse_box):
         for sprite in self.get_group().sprites():
             if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC:
-                dialog_box.execute(sprite.dialog)
-                reponse_box.execute(sprite.reponse)
+                dialog_box.execute(sprite.dialog, sprite.reponse)
 
+                if sprite.type == "prof": # ajoute la condition pour l ouverture de la boite dialogue de reponse
+                    reponse_box.execute()
+
+
+    def collect_npc_answer(self):
+        for sprite in self.get_group().sprites():
+            if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC and sprite.type == "prof":
+                answer=Check_Answer(sprite.reponse)
+                answer.read_reponse()
+
+
+    def collect_answer(self):
+        for sprite in self.get_group().sprites():
+            if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC:
+                return sprite.reponse
 
     def check_collision(self):
         #gestion des portails

@@ -21,6 +21,7 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
         self.map_manager = MapManager(self.screen, self.player)
         self.dialog_box = DialogBox()
         self.reponse_box = Reponse_DialogBox()
+        self.input_txt = ""
 
     def handle_input(self): #methode pour prendre en charge les entrees claviers
         pressed = pygame.key.get_pressed() # variable qui recuperera absolument toute les touches entrees par le joueur
@@ -64,9 +65,27 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
                 if event.type == pygame.QUIT: #le joueur a clique sur la petite croix en haut de la fenetre
                     running = False #on quitte donc la boucle
                 elif event.type == pygame.KEYDOWN: #correspond a nimporte quelle touche
-                    if event.key == pygame.K_SPACE: #barre d'espace
+                    if event.key == pygame.K_HASH: #button entrer
+                        b=self.reponse_box.input_text
+                        print(b)
+
+
                         self.map_manager.check_npc_collision(self.dialog_box, self.reponse_box)#passer à la prochaine phrase
-                        
+                        a=self.dialog_box.question[self.dialog_box.text_index]
+                        print(a)
+                        if a==b:
+                            print("youpi")
+                        else:
+                            print("pas encore ça")
+
+
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.reponse_box.input_text = self.reponse_box.input_text[:-1]
+                    else :
+                        self.reponse_box.input_text += event.unicode
+
+
+
 
             clock.tick(60) # fps = 60
 

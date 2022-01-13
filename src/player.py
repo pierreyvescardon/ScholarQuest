@@ -56,7 +56,7 @@ class Player(Entity):
 
 class NPC(Entity):
 
-    def __init__(self, name, nb_points, dialog, reponse):
+    def __init__(self, name, nb_points, dialog, reponse,type):
         super().__init__(name,0,0)
         self.nb_points = nb_points
         self.dialog = dialog
@@ -65,6 +65,7 @@ class NPC(Entity):
         self.name = name
         self.speed = 1
         self.current_point=0
+        self.type=type
 
     def move(self):
         current_point = self.current_point

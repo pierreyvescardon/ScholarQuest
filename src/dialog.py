@@ -10,19 +10,21 @@ class DialogBox:
         self.box = pygame.image.load(("C:/Users/Proprio/Desktop/ScholarQuest/dialogs/dialog_box.png"))
         self.box = pygame.transform.scale(self.box, (700,100))
         self.texts = []
-        self.input_text = str
         self.text_index = 0
+        self.question=[]
         self.letter_index = 0# pour afficher les lettres 1 par 1
         self.font = pygame.font.Font("C:/Users/Proprio/Desktop/ScholarQuest/dialogs/dialog_font.ttf", 12)#18 correspond q lq tqille de la police
         self.reading = False
 
-    def execute(self, dialog=[]):
+    def execute(self, dialog=[], question=[]):
         if self.reading:
             self.next_text()#si je suis en mode lecture je pourrais passer a la prochaine phrase
         else:
             self.reading =True
             self.text_index=0
             self.texts = dialog
+            self.question=question
+            self.question.insert(0,"")#ajoute un décalage necessaire entre les questions et les reponses
 
 
     def render(self, screen):
