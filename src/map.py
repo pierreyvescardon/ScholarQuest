@@ -37,7 +37,7 @@ class MapManager:
             Portal(from_world="world", origin_point="enter_house", target_world="house", teleport_point="spawn_enter_house"),
             Portal(from_world="world", origin_point="enter_house2", target_world="house2", teleport_point="spawn_house"),
             Portal(from_world="world", origin_point="enter_dungeon", target_world="dungeon", teleport_point="spawn_dungeon")
-        ], npcs=[NPC("paul", nb_points=7, dialog=ListeQuestions.questionnaire("Questions").questions, reponse=ListeQuestions.questionnaire("Questions").reponse)])
+        ], npcs=[NPC("linux", nb_points=4, dialog=ListeQuestions.questionnaire("Questions").questions, reponse=ListeQuestions.questionnaire("Questions").reponse),NPC("paul", nb_points=7, dialog=ListeQuestions.questionnaire("Questions").questions, reponse=ListeQuestions.questionnaire("Questions").reponse)])
         self.registerMap("house", portals=[
             Portal(from_world="house", origin_point="exit_house", target_world="world", teleport_point="spawn_exit_house")
         ])
