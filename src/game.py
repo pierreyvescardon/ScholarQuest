@@ -5,10 +5,12 @@ import pyscroll
 from player import Player
 from src.dialog import DialogBox
 from src.map import MapManager
+from src.menu import Menu_Box
 from src.reponse_dialog import Reponse_DialogBox
 
 
 class Game: #il faudra instancier la class game dans main pour pouvoir l utiliser
+
 
     def __init__(self): #fonction qui se fera au chargement de notre jeu
 
@@ -22,6 +24,11 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
         self.dialog_box = DialogBox()
         self.reponse_box = Reponse_DialogBox()
         self.input_txt = ""
+        self.menu_box = Menu_Box()
+
+        #Separer des event
+
+        self.battle_period=False
 
     def handle_input(self): #methode pour prendre en charge les entrees claviers
         pressed = pygame.key.get_pressed() # variable qui recuperera absolument toute les touches entrees par le joueur
@@ -59,13 +66,39 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
             self.map_manager.draw()
             self.dialog_box.render(self.screen) #self.screen indique la surface sur laquelle applique la boite de dialogue
             self.reponse_box.render(self.screen)
+
+            #instanciation des combats
+            if self.map_manager.check_foe_collision()== True:
+                self.battle_period=True
+                self.map_manager.battle_instance()
+                self.menu_box.render(self.screen)
+
+
+
+
+
+
+
             pygame.display.flip()# permet d'actualiser en temps reel et a chaque tout de boucle. Permet donc d'afficher l element precedent
+
+
+
+
+
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: #le joueur a clique sur la petite croix en haut de la fenetre
                     running = False #on quitte donc la boucle
                 elif event.type == pygame.KEYDOWN: #correspond a nimporte quelle touche
-                    if event.key == pygame.K_HASH: #button entrer
+                    if self.battle_period==True :
+
+                        if event.key == pygame.K_DOWN:
+                            self.menu_box.next_menu()
+
+                        elif event.key == pygame.K_UP:
+                            self.menu_box.previous_menu()
+
+                    elif event.key == pygame.K_HASH: #button entrer
                         b=self.reponse_box.input_text
                         print(b)
 
@@ -77,6 +110,7 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
                             print("youpi")
                         else:
                             print("pas encore ça")
+
 
 
                     elif event.key == pygame.K_BACKSPACE:

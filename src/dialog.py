@@ -8,7 +8,7 @@ class DialogBox:
     def __init__(self):
 
         self.box = pygame.image.load(("C:/Users/Proprio/Desktop/ScholarQuest/dialogs/dialog_box.png"))
-        self.box = pygame.transform.scale(self.box, (700,100))
+        self.box = pygame.transform.scale(self.box, (800,150))
         self.texts = []
         self.text_index = 0
         self.question=[]

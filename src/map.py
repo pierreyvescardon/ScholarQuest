@@ -4,7 +4,8 @@ import pygame, pytmx, pyscroll
 
 
 from src import ListeQuestions
-from src.CheckAnswer import Check_Answer
+
+
 from src.ListeQuestions import questionnaire
 from src.player import NPC
 from src.reponse_dialog import Reponse_DialogBox
@@ -40,7 +41,7 @@ class MapManager:
             Portal(from_world="world", origin_point="enter_house", target_world="house", teleport_point="spawn_enter_house"),
             Portal(from_world="world", origin_point="enter_house2", target_world="house2", teleport_point="spawn_house"),
             Portal(from_world="world", origin_point="enter_dungeon", target_world="dungeon", teleport_point="spawn_dungeon")
-        ], npcs=[NPC("paul", nb_points=7, dialog=ListeQuestions.questionnaire("Questions").questions, reponse=ListeQuestions.questionnaire("Questions").reponse,type="prof")])
+        ], npcs=[NPC("paul", nb_points=7, dialog=ListeQuestions.questionnaire("Questions").questions, reponse=ListeQuestions.questionnaire("Questions").reponse,type="foe"),NPC("linux", nb_points=4, dialog=ListeQuestions.questionnaire("Questions").questions, reponse=ListeQuestions.questionnaire("Questions").reponse, type="prof")])
         self.registerMap("house", portals=[
             Portal(from_world="house", origin_point="exit_house", target_world="world", teleport_point="spawn_exit_house")
         ])
@@ -58,18 +59,24 @@ class MapManager:
 
     def check_npc_collision(self, dialog_box, reponse_box):
         for sprite in self.get_group().sprites():
-            if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC:
+            if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC and sprite.type=="prof":
                 dialog_box.execute(sprite.dialog, sprite.reponse)
 
                 if sprite.type == "prof": # ajoute la condition pour l ouverture de la boite dialogue de reponse
                     reponse_box.execute()
 
 
-    def collect_npc_answer(self):
+    def check_foe_collision(self):
         for sprite in self.get_group().sprites():
-            if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC and sprite.type == "prof":
-                answer=Check_Answer(sprite.reponse)
-                answer.read_reponse()
+            if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC and sprite.type == "foe":
+                return True
+
+    def battle_instance(self):
+        for sprite in self.get_group().sprites():
+            if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC and sprite.type == "foe":
+                self.registerBattleScreen(name=sprite.name)
+                sprite.speed=0
+                self.player.speed=0
 
 
     def collect_answer(self):
@@ -163,3 +170,14 @@ class MapManager:
 
         for npc in self.get_map().npcs:
             npc.move()
+
+    def registerBattleScreen(self,name):  # nom de l'ecran de combat qui va etre chargee
+         #charger la carte (tmx)
+        tmx_data = pytmx.util_pygame.load_pygame(f"C:/Users/Proprio/Desktop/ScholarQuest/map/{name}.tmx")
+        map_data = pyscroll.TiledMapData(tmx_data)
+        map_layer = pyscroll.orthographic.BufferedRenderer(map_data,
+                                                           self.screen.get_size())  # permet de charger les differents calques de notre fichier tmx. self.screen.get_size() indique la surface sur laquelle on veut afficher nos layer pour le coup map_data
+        map_layer.zoom = 1
+
+        self.group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=8)
+        self.group.draw(self.screen)
