@@ -9,7 +9,6 @@ class Menu_Box:
 
     def __init__(self,numero=1):
 
-
         self.box = pygame.image.load((f"C:/Users/Proprio/Desktop/ScholarQuest/menu/battle_menu_{numero}.png"))
         self.box = pygame.transform.scale(self.box, (800,150))
         self.reading = True

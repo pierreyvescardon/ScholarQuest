@@ -8,6 +8,7 @@ from src import ListeQuestions
 
 from src.ListeQuestions import questionnaire
 from src.player import NPC
+from src.anim import Anim_seq
 from src.reponse_dialog import Reponse_DialogBox
 
 
@@ -36,6 +37,7 @@ class MapManager:
         self.screen = screen
         self.player = player
         self.current_map = "world"  # nom de la carte lancee par defaut
+        self.anim_main = Anim_seq(path="C:/Users/Proprio/Desktop/ScholarQuest/animation/")
 
         self.registerMap("world", portals=[
             Portal(from_world="world", origin_point="enter_house", target_world="house", teleport_point="spawn_enter_house"),

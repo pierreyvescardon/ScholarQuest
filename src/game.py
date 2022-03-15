@@ -1,11 +1,11 @@
 import pygame
-import pytmx
-import pyscroll
+import time
 
 from player import Player
 from src.dialog import DialogBox
 from src.map import MapManager
 from src.menu import Menu_Box
+from src.anim import Anim_seq
 from src.reponse_dialog import Reponse_DialogBox
 
 
@@ -15,20 +15,26 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
     def __init__(self): #fonction qui se fera au chargement de notre jeu
 
         # creer la fenetre du jeu
-        self.screen = pygame.display.set_mode(((800, 600))) #le tuple indique la taille de fenetre en largeur et en hauter en pixel
+        self.map_screen = pygame.display.set_mode(((800, 600))) #le tuple indique la taille de fenetre en largeur et en hauter en pixel
         pygame.display.set_caption("ScholarQuest") #permet d indiquer le titre de la fenetre
+        self.battle_screen = pygame.display.set_mode(((800, 600))) #le tuple indique la taille de fenetre en largeur et en hauter en pixel
+        pygame.display.set_caption("ScholarQuest")
 
         #Generer un joueur
         self.player = Player() # coordonnee initiale du joueur O,0
-        self.map_manager = MapManager(self.screen, self.player)
+        self.map_manager = MapManager(self.map_screen, self.player)
         self.dialog_box = DialogBox()
         self.reponse_box = Reponse_DialogBox()
         self.input_txt = ""
         self.menu_box = Menu_Box()
+        self.anim_main = Anim_seq(path="C:/Users/Proprio/Desktop/ScholarQuest/animation/main/")
+        self.anim_monstre=Anim_seq(path="C:/Users/Proprio/Desktop/ScholarQuest/animation/monstre/")
+
 
         #Separer des event
 
         self.battle_period=False
+
 
     def handle_input(self): #methode pour prendre en charge les entrees claviers
         pressed = pygame.key.get_pressed() # variable qui recuperera absolument toute les touches entrees par le joueur
@@ -64,14 +70,27 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
             self.handle_input() #l'entreee clavier s'active avant tous les autres elements
             self.update() #permet d actualiser le groupe en permanence
             self.map_manager.draw()
-            self.dialog_box.render(self.screen) #self.screen indique la surface sur laquelle applique la boite de dialogue
-            self.reponse_box.render(self.screen)
+            self.dialog_box.render(self.map_screen) #self.screen indique la surface sur laquelle applique la boite de dialogue
+            self.reponse_box.render(self.map_screen)
+
 
             #instanciation des combats
             if self.map_manager.check_foe_collision()== True:
-                self.battle_period=True
                 self.map_manager.battle_instance()
-                self.menu_box.render(self.screen)
+                self.battle_period=True
+
+                if self.anim_main.reading :
+                    self.anim_main.update(self.battle_screen)
+
+                else :
+                    self.menu_box.render(self.battle_screen)
+                    print(self.anim_monstre.animation_sprite)
+                    print(self.anim_monstre.path)
+                    self.anim_monstre.update_loop(self.battle_screen)
+
+
+
+
 
 
 
@@ -87,10 +106,12 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
 
 
             for event in pygame.event.get():
+
+
                 if event.type == pygame.QUIT: #le joueur a clique sur la petite croix en haut de la fenetre
                     running = False #on quitte donc la boucle
                 elif event.type == pygame.KEYDOWN: #correspond a nimporte quelle touche
-                    if self.battle_period==True :
+                    if (self.battle_period==True) and self.anim_main.reading==False :
 
                         if event.key == pygame.K_DOWN:
                             self.menu_box.next_menu()
