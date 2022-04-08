@@ -1,133 +1,83 @@
-from dataclasses import dataclass
+class TextRectException:
+    def __init__(self, message=None):
+        self.message = message
 
-import pygame, pytmx, pyscroll
-
-
-@dataclass  # décorateur : la classe en dessous vas absorber les caractéristiques de cette classe
-class Menu:  # pas de def __init__ car c'est une dataclasse
-    name: str
-    objet: list[pygame.Rect]  # la liste va contenir des rectangles de collision issu de la classe Rect de pygame
-    group: pyscroll.PyscrollGroup
-    tmx_data: pytmx.TiledMap # permet de recuperer l'ensemble des objets comme les spawns depuis nos fichier tmx
-    npcs: list[NPC]
-
-class MenuManager:
-
-    def __init__(self, screen):
-        self.menus = dict()  # ex "competence" -> ("house", objet, group)
-        self.screen = screen
+    def __str__(self):
+        return self.message
 
 
-        self.registerMenu("world", portals=[
-            Portal(from_world="world", origin_point="enter_house", target_world="house", teleport_point="spawn_enter_house"),
-            Portal(from_world="world", origin_point="enter_house2", target_world="house2", teleport_point="spawn_house"),
-            Portal(from_world="world", origin_point="enter_dungeon", target_world="dungeon", teleport_point="spawn_dungeon")
-        ], npcs=[NPC("paul", nb_points=7, dialog=ListeQuestions.questionnaire("Questions").questions, reponse=ListeQuestions.questionnaire("Questions").reponse)])
-        self.registerMap("house", portals=[
-            Portal(from_world="house", origin_point="exit_house", target_world="world", teleport_point="spawn_exit_house")
-        ])
-        self.registerMap("house2", portals=[
-            Portal(from_world="house2", origin_point="exit_house", target_world="world",
-                   teleport_point="exit_house2")
-        ])
-        self.registerMap("dungeon", portals=[
-            Portal(from_world="dungeon", origin_point="exit_dungeon", target_world="world",
-                   teleport_point="spawn_exit_dungeon")
-        ])
+def render_textrect(string, font, rect, text_color, background_color, justification=0):
+    """Returns a surface containing the passed text string, reformatted
+    to fit within the given rect, word-wrapping as necessary. The text
+    will be anti-aliased.
 
-        self.teleport_player("player")
-        self.teleport_npcs()
+    Takes the following arguments:
 
-    def check_npc_collision(self, dialog_box, reponse_box):
-        for sprite in self.get_group().sprites():
-            if sprite.feet.colliderect(self.player.rect) and type(sprite) is NPC:
-                dialog_box.execute(sprite.dialog)
-                reponse_box.execute(sprite.reponse)
+    string - the text you wish to render. \n begins a new line.
+    font - a Font object
+    rect - a rectstyle giving the size of the surface requested.
+    text_color - a three-byte tuple of the rgb value of the
+                 text color. ex (0, 0, 0) = BLACK
+    background_color - a three-byte tuple of the rgb value of the surface.
+    justification - 0 (default) left-justified
+                    1 horizontally centered
+                    2 right-justified
 
+    Returns the following values:
 
-    def check_collision(self):
-        #gestion des portails
-        for portal in self.get_map().portals:
-            if portal.from_world == self.current_map:
-                point = self.get_object(portal.origin_point)
-                rect = pygame.Rect(point.x, point.y, point.width, point.height)
+    Success - a surface object with the text rendered onto it.
+    Failure - raises a TextRectException if the text won't fit onto the surface.
+    """
 
-                if self.player.feet.colliderect(rect):
-                    copy_portal = portal
-                    self.current_map = portal.target_world
-                    self.teleport_player(copy_portal.teleport_point)
+    import pygame
 
-        #gestion des collisions
-        for sprite in self.get_group().sprites():
+    final_lines = []
 
-            if type(sprite) is NPC:
-                if sprite.feet.colliderect(self.player.rect):
-                    sprite.speed = 0
-                else :
-                    sprite.speed = 2
+    requested_lines = string.splitlines()
 
-            if sprite.feet.collidelist(self.get_walls()) > -1:
-                sprite.move_back()
+    # Create a series of lines that will fit on the provided
+    # rectangle.
 
-    def teleport_player(self, name):
-        point =self.get_object(name)
-        self.player.position[0] = point.x #remplace la poisition initiale du player par la position en x
-        self.player.position[1] = point.y
-        self.player.save_location()#permet d'eviter les problematiques de collision apres teleportation avec des elements de type collision
+    for requested_line in requested_lines:
+        if font.size(requested_line)[0] > rect.width:
+            words = requested_line.split(' ')
+            # if any of our words are too long to fit, return.
+            for word in words:
+                if font.size(word)[0] >= rect.width:
+                    raise TextRectException("The word " + word + " is too long to fit in the rect passed.")
+            # Start a new line
+            accumulated_line = ""
+            for word in words:
+                test_line = accumulated_line + word + " "
+                # Build the line while the words fit.
+                if font.size(test_line)[0] < rect.width:
+                    accumulated_line = test_line
+                else:
+                    final_lines.append(accumulated_line)
+                    accumulated_line = word + " "
+            final_lines.append(accumulated_line)
+        else:
+            final_lines.append(requested_line)
 
-    def registerMap(self, name, portals=[], npcs=[]):  # nom de la carte qui va etre chargee
-        # charger la carte (tmx)
-        tmx_data = pytmx.util_pygame.load_pygame(f"C:/Users/Proprio/Desktop/ScholarQuest/map/{name}.tmx")
-        map_data = pyscroll.TiledMapData(tmx_data)
-        map_layer = pyscroll.orthographic.BufferedRenderer(map_data,
-                                                           self.screen.get_size())  # permet de charger les differents calques de notre fichier tmx. self.screen.get_size() indique la surface sur laquelle on veut afficher nos layer pour le coup map_data
-        map_layer.zoom = 2  # fait un zoom en deux fois plus grand de ma carte
+            # Let's try to write the text out on the surface.
 
-        # definir une liste qui va stocker les objets de types collision
-        walls = []
+    surface = pygame.Surface(rect.size)
+    surface.fill(background_color)
 
-        for obj in tmx_data.objects:  # recupere tous les objets de la carte
-            if obj.type == "collision":
-                walls.append(pygame.Rect(obj.x, obj.y, obj.width, obj.height))
+    accumulated_height = 0
+    for line in final_lines:
+        if accumulated_height + font.size(line)[1] >= rect.height:
+            raise TextRectException("Once word-wrapped, the text string was too tall to fit in the rect.")
+        if line != "":
+            tempsurface = font.render(line, 1, text_color)
+            if justification == 0:
+                surface.blit(tempsurface, (0, accumulated_height))
+            elif justification == 1:
+                surface.blit(tempsurface, ((rect.width - tempsurface.get_width()) / 2, accumulated_height))
+            elif justification == 2:
+                surface.blit(tempsurface, (rect.width - tempsurface.get_width(), accumulated_height))
+            else:
+                raise TextRectException("Invalid justification argument: " + str(justification))
+        accumulated_height += font.size(line)[1]
 
-        # dessiner le groupe de calques
-        group = pyscroll.PyscrollGroup(map_layer=map_layer, default_layer=6)  # default_layer est la position du calque par defaut ce qui peut etre utile si on veut mettre le joueur a un endroit de notre carte pour commencer
-        group.add(self.player)  # j ajoute mon player au groupe de calque
-
-        #recuperer tous les npcs pour les ajouter au groupe
-        for npc in npcs:
-            group.add(npc)
-
-        # creer un objet Map
-        self.maps[name] = Map(name, walls, group, tmx_data, portals, npcs)  # ajoute dans le dictionnaire les valeurs avec la clef name.
-
-    def get_map(self):
-        return self.maps[self.current_map]  # recuperer quel est l'objet de map actuel
-
-    def get_group(self):
-        return self.get_map().group  # renvoie le groupe de l'objet map recupere par get_map
-
-    def get_walls(self):
-        return self.get_map().walls
-
-    def get_object(self, name): return self.get_map().tmx_data.get_object_by_name(name)#recupere certains objets de tmx_data grace a leur nom
-
-    def teleport_npcs(self):
-        for map in self.maps:
-            map_data = self.maps[map]
-            npcs = map_data.npcs
-
-            for  npc in npcs:
-                npc.load_points(map_data.tmx_data)
-                npc.teleport_spawn()
-
-    def draw(self):  # setter qui permet de recuperer la carte
-        self.get_group().draw(self.screen)
-        self.get_group().center(self.player.rect.center)  # place la camera sur le joueur directement
-
-    def update(self):
-        self.get_group().update()
-        self.check_collision()
-
-        for npc in self.get_map().npcs:
-            npc.move()
+    return surface

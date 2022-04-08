@@ -27,8 +27,8 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
         self.reponse_box = Reponse_DialogBox()
         self.input_txt = ""
         self.menu_box = Menu_Box()
-        self.anim_main = Anim_seq(path="C:/Users/Proprio/Desktop/ScholarQuest/animation/main/")
-        self.anim_monstre=Anim_seq(path="C:/Users/Proprio/Desktop/ScholarQuest/animation/monstre/")
+        self.anim_main = Anim_seq(path="C:/Users/Proprio/Desktop/ScholarQuest/animation/main/", width=800, height=150, X_POSITION=0, Y_POSITION=440)
+        self.anim_monstre=Anim_seq(path="C:/Users/Proprio/Desktop/ScholarQuest/animation/monstre/", width=250, height=200, X_POSITION=400, Y_POSITION=250)
 
 
         #Separer des event
@@ -84,8 +84,7 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
 
                 else :
                     self.menu_box.render(self.battle_screen)
-                    print(self.anim_monstre.animation_sprite)
-                    print(self.anim_monstre.path)
+
                     self.anim_monstre.update_loop(self.battle_screen)
 
 
