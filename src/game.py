@@ -118,6 +118,11 @@ class Game: #il faudra instancier la class game dans main pour pouvoir l utilise
                         elif event.key == pygame.K_UP:
                             self.menu_box.previous_menu()
 
+                        elif event.key == pygame.K_HASH and self.menu_box.numero==1:
+                            self.battle_period==False
+                            self.player.position[1]+=50
+                            self.player.speed=3
+
                     elif event.key == pygame.K_HASH: #button entrer
                         b=self.reponse_box.input_text
                         print(b)
